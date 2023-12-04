@@ -6,6 +6,6 @@ with open('day4/input', 'r') as file:
 
     for line in file:
         card = Card(line)
-        totalPoints += card.winnings
+        totalPoints += card.points
 
 print(totalPoints)
