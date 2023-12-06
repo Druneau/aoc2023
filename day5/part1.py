@@ -59,18 +59,20 @@ def main(filename):
         src = 'seed'
         m = get_mapper(mappers, src)
         while m is not None:
-            print('{}:{}'.format(src, value))
-            print('  to   ')
+            # print('{}:{}'.format(src, value))
+            # print('  to   ')
             value = m.get_mapped_value(value)
             src = m.destination_category
-            print('{}:{}'.format(src, value))
-            print('------')
+            # print('{}:{}'.format(src, value))
+            # print('------')
             m = get_mapper(mappers, src)
 
         if min_location is None:
             min_location = value
         elif min_location > value:
             min_location = value
+
+        print('seed:{}, location:{}'.format(s, value))
 
     print(min_location)
 
