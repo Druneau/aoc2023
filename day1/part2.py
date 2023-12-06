@@ -1,5 +1,5 @@
 import re
-inputFile = open('input', 'r')
+inputFile = open('day2/input', 'r')
 
 
 def startWordDigit(line, word, digit):
