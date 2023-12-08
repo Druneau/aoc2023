@@ -12,16 +12,18 @@ class TestHand:
         assert Hand('AA223').type == HandType.TWO_PAIR
         assert Hand('AA234').type == HandType.ONE_PAIR
 
+    def test_cards_valid(self):
+        assert Hand.get_card_value('A')
+        with pytest.raises(ValueError):
+            assert Hand.get_card_value('Z')
+
     def test_winner(self):
         assert Hand.get_winner(Hand('AAAAA'), Hand('AAAA2')).cards == 'AAAAA'
         assert Hand.get_winner(Hand('AAAAA'), Hand('22222')).cards == 'AAAAA'
         assert Hand.get_winner(Hand('22222'), Hand('AAAAA')).cards == 'AAAAA'
         assert Hand.get_winner(Hand('AAA22'), Hand('AAA33')).cards == 'AAA33'
-
         assert Hand.get_winner(Hand('AKQJT'), Hand('AKQJ3')).cards == 'AKQJT'
-
         assert Hand.get_winner(Hand('AQ829'), Hand('AJ7AA')).cards == 'AJ7AA'
-
         assert Hand.get_winner(Hand('AKAAA'), Hand('AA3TJ')).cards == 'AKAAA'
 
         with pytest.raises(ValueError):
@@ -31,6 +33,13 @@ class TestHand:
     def test_bid(self):
         assert Hand('AAAAA', '10').bid == 10
         assert Hand('AAAAA', 10).bid == 10
+
+    def test_hand_size(self):
+        with pytest.raises(ValueError):
+            assert Hand('A234')
+            assert Hand('')
+            assert Hand(None)
+            assert Hand('A24567')
 
     def test_joker(self):
         assert Hand('AAAAJ', joker='J').joker == 'J'

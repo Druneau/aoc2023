@@ -1,42 +1,7 @@
-from enum import Enum
+from OrderedEnum import OrderedEnum
 from random import random
 
 from collections import Counter
-
-
-class OrderedEnum(Enum):
-
-    def __ge__(self, other):
-
-        if self.__class__ is other.__class__:
-
-            return self.value >= other.value
-
-        return NotImplemented
-
-    def __gt__(self, other):
-
-        if self.__class__ is other.__class__:
-
-            return self.value > other.value
-
-        return NotImplemented
-
-    def __le__(self, other):
-
-        if self.__class__ is other.__class__:
-
-            return self.value <= other.value
-
-        return NotImplemented
-
-    def __lt__(self, other):
-
-        if self.__class__ is other.__class__:
-
-            return self.value < other.value
-
-        return NotImplemented
 
 
 class HandType(OrderedEnum):
@@ -59,6 +24,10 @@ class CardType(OrderedEnum):
 
 class Hand:
     def __init__(self, cards, bid=0, joker=None) -> None:
+
+        if len(cards) != 5:
+            raise ValueError('Wrong number of cards in hand!')
+
         self.cards = cards
         self.bid = int(bid)
         self.joker = joker
@@ -108,10 +77,10 @@ class Hand:
         elif hand_one.type < hand_two.type:
             return hand_two
         if hand_one.type == hand_two.type:
-            return Hand.get_hand_winner(hand_one, hand_two)
+            return Hand.get_same_type_winner(hand_one, hand_two)
 
     @staticmethod
-    def get_hand_winner(hand_one, hand_two):
+    def get_same_type_winner(hand_one, hand_two):
         joker = hand_one.joker
         for c1, c2 in zip(hand_one.cards, hand_two.cards):
             if Hand.get_card_value(c1, joker) > Hand.get_card_value(c2, joker):
@@ -119,15 +88,17 @@ class Hand:
             if Hand.get_card_value(c1, joker) < Hand.get_card_value(c2, joker):
                 return hand_two
 
-        raise ValueError('Identical hands... no winner!')
+        raise ValueError('Identical hands... draw!')
 
     @staticmethod
     def get_card_value(card, joker=None):
 
         if str.isdigit(card):
             value = card
-        else:
+        elif card in CardType.__members__:
             value = CardType[card].value
+        else:
+            raise ValueError('Card is not valid!')
 
         if joker is not None:
             if card == joker:
