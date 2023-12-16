@@ -93,4 +93,4 @@ def test_generate_mirror_pairs():
 
 def test_part1():
     assert day13.part1('day13/input_example.txt') == 405
-    assert day13.part1('day13/input.txt') == 1
+    assert day13.part1('day13/input.txt') == 29165

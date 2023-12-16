@@ -197,7 +197,6 @@ def get_hor_spread(map):
 
 
 def part1(input='day13/input.txt'):
-
     total = 0
 
     with open(input, 'r') as file:
@@ -210,14 +209,15 @@ def part1(input='day13/input.txt'):
                 _map.append(line)
             else:
                 v, h = get_real_mirror(_map)
-
-                print('---------------')
-                print_array(_map)
-                print('v:{} h:{}'.format(v, h))
-
                 total += v
                 total += (h*100)
                 _map = []
+
+        if _map:
+            v, h = get_real_mirror(_map)
+            total += v
+            total += (h*100)
+            _map = []
 
     return total
 
