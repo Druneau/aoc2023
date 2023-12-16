@@ -45,7 +45,7 @@ def generate_mirror_pairs(pair, length):
     return pairs
 
 
-def get_real_mirror(map):
+def get_real_mirror(map, v_ignore=0, h_ignore=0):
     verts, hors = get_mirror_lines(map)
 
     v_result = 0
@@ -61,8 +61,9 @@ def get_real_mirror(map):
             if works:
                 if v_result != 0:
                     raise ValueError('already found one...')
-                v_result = max(v)
-                break
+                if max(v) != v_ignore:
+                    v_result = max(v)
+                    break
 
     h_result = 0
     if hors:
@@ -77,8 +78,9 @@ def get_real_mirror(map):
             if works:
                 if h_result != 0:
                     raise ValueError('already found one...')
-                h_result = max(h)
-                break
+                if max(h) != h_ignore:
+                    h_result = max(h)
+                    break
 
     return (v_result, h_result)
 
@@ -222,6 +224,61 @@ def part1(input='day13/input.txt'):
     return total
 
 
+def part2(input='day13/input.txt'):
+
+    total = 0
+
+    with open(input, 'r') as file:
+        map_orig = []
+
+        for line in file:
+            line = line.strip()
+            if line:
+                map_orig.append(line)
+            else:
+
+                v, h = get_real_mirror(map_orig)
+
+                cols = len(map_orig[0])
+                rows = len(map_orig)
+
+                found = False
+                for r in range(rows):
+                    if found:
+                        break
+                    line = map_orig[r]
+                    for c in range(cols):
+                        map_clea = [sublist[:] for sublist in map_orig]
+                        smudge = line[c]
+                        fix = ''
+                        if smudge == '.':
+                            fix = '#'
+                        else:
+                            fix = '.'
+                        s = line[:c] + fix + line[c + 1:]
+                        map_clea[r] = s
+
+                        v_c, h_c = get_real_mirror(map_clea, v, h)
+
+                        if v_c != v and v_c != 0:
+                            v = v_c
+                            h = 0
+                            found = True
+                            break
+
+                        elif h_c != h and h_c != 0:
+                            h = h_c
+                            v = 0
+                            found = True
+                            break
+
+                total += v
+                total += (h*100)
+                map_orig = []
+
+    return total
+
+
 def print_array(loop):
     print('')
     for row in loop:
@@ -232,3 +289,4 @@ def print_array(loop):
 
 if __name__ == "__main__":
     print(part1())
+    print(part2())
