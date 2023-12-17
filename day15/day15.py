@@ -1,5 +1,7 @@
+from typing import List, Tuple, Optional
 
-def hash(lens_info):
+
+def hash(lens_info: str) -> int:
     cur_value = 0
 
     for c in lens_info:
@@ -10,9 +12,9 @@ def hash(lens_info):
     return cur_value
 
 
-def parse_and_hash(step):
+def parse_and_hash(step: str) -> Tuple[str, str, int, int]:
     if '-' in step:
-        lens, action, focal = (step[:-1], step[-1], -1)
+        lens, action, focal = (step[:-1], step[-1], None)
     else:
         lens, action, focal = (step[:-2], step[-2], int(step[-1]))
 
@@ -21,7 +23,7 @@ def parse_and_hash(step):
     return (lens, action, focal, lens_hash)
 
 
-def load_init_sequence(input):
+def load_init_sequence(input: str) -> List[str]:
     init_sequence = []
 
     with open(input, 'r') as file:
@@ -31,26 +33,26 @@ def load_init_sequence(input):
     return init_sequence
 
 
-def get_lens_index(box, lens):
+def get_lens_index(box: List[str], lens: str) -> Optional[int]:
     try:
         return next(i for i, v in enumerate(box) if v.startswith(lens))
     except StopIteration:
-        return -1
+        return None
 
 
-def remove_lens(box, lens):
+def remove_lens(box: List[str], lens: str) -> List[str]:
     index = get_lens_index(box, lens)
-    if index != -1:
+    if index is not None:
         del box[index]
     return box
 
 
-def update_lens(box, lens, focal):
+def update_lens(box: List[str], lens: str, focal: int) -> List[str]:
 
     index = get_lens_index(box, lens)
     label = lens + ' ' + str(focal)
 
-    if index == -1:
+    if index is None:
         box.append(label)
     else:
         box[index] = label
@@ -58,7 +60,7 @@ def update_lens(box, lens, focal):
     return box
 
 
-def part1(input='day15/input.txt'):
+def part1(input: str = 'day15/input.txt') -> int:
     sum_hashes = 0
 
     for seq in load_init_sequence(input):
@@ -67,11 +69,11 @@ def part1(input='day15/input.txt'):
     return sum_hashes
 
 
-def focusing_power(hash, index, focal):
-    return (hash+1)*index*int(focal)
+def focusing_power(hash: int, index: int, focal: int) -> int:
+    return (hash+1)*index*focal
 
 
-def part2(input='day15/input.txt'):
+def part2(input: str = 'day15/input.txt') -> int:
 
     boxes = {}
 
@@ -91,6 +93,7 @@ def part2(input='day15/input.txt'):
     for hash, lenses in boxes.items():
         for i, lens in enumerate(lenses, start=1):
             _, focal = lens.split()
+            focal = int(focal)
             total_focusing_power += focusing_power(hash, i, focal)
 
     return total_focusing_power

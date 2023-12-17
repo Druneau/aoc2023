@@ -18,7 +18,7 @@ def test_hash():
 
 def test_parse_and_hash():
     assert day15.parse_and_hash('rn=1') == ('rn', '=', 1, 0)
-    assert day15.parse_and_hash('cm-') == ('cm', '-', -1, 0)
+    assert day15.parse_and_hash('cm-') == ('cm', '-', None, 0)
     assert day15.parse_and_hash('qp=3') == ('qp', '=', 3, 1)
     assert day15.parse_and_hash('cm=2') == ('cm', '=', 2, 0)
 
@@ -26,7 +26,7 @@ def test_parse_and_hash():
 def test_get_lens_index():
     assert day15.get_lens_index(['rn 1', 'qp 3', 'cm 2'], 'rn') == 0
     assert day15.get_lens_index(['rn 1', 'qp 3', 'cm 2'], 'cm') == 2
-    assert day15.get_lens_index(['rn 1', 'qp 3', 'cm 2'], 'zz') == -1
+    assert day15.get_lens_index(['rn 1', 'qp 3', 'cm 2'], 'zz') == None
 
 
 def test_update_lens():
