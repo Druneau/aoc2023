@@ -81,6 +81,8 @@ def test_generate_line():
     assert day18.generate_line('U 3 (#70c710)') == ((0, -1), (0, -3))
     assert day18.generate_line('D 5 (#70c710)') == ((0, 1), (0, 5))
 
+    assert day18.generate_line('R 6  (#70c710)', True) == ((1, 0), (461937, 0))
+
 
 def test_translate_line():
     line = ((1, 0), (6, 0))
@@ -131,5 +133,9 @@ def test_dig_lagoon_trench(lagoon_edges, trench_fill_example):
 
 
 def test_part1():
-    # assert day18.part1('day18/input_example.txt') == 62
-    assert day18.part1() == 62
+    assert day18.part1() == 45159
+
+
+def test_part2():
+    assert day18.part2(input='day18/input_example.txt') == 952408144115
+    assert day18.part2() == 134549294799713

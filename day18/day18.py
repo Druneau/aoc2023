@@ -1,10 +1,7 @@
 from typing import Tuple, List
-
 from draw_trench import print_array
-
 import time
-
-import matplotlib.pyplot as plt
+from shapely.geometry import Polygon
 
 
 def scale_tuple(coordinate, scale_factor):
@@ -12,19 +9,25 @@ def scale_tuple(coordinate, scale_factor):
 
 
 def get_vector(direction_char):
-    if direction_char == 'U':
+    if direction_char == 'U' or direction_char == '3':
         return (0, -1)
-    if direction_char == 'D':
+    if direction_char == 'D' or direction_char == '1':
         return (0, 1)
-    if direction_char == 'L':
+    if direction_char == 'L' or direction_char == '2':
         return (-1, 0)
-    if direction_char == 'R':
+    if direction_char == 'R' or direction_char == '0':
         return (1, 0)
 
 
-def generate_line(line_string: str) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+def generate_line(line_string: str, from_hex=False) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     dir, count, color = line_string.split()
-    count = int(count)
+
+    if from_hex:
+        count = int(color[2:-2], 16)
+        dir = color[-2]
+    else:
+        count = int(count)
+
     start = get_vector(dir)
     end = scale_tuple(start, count)
 
@@ -44,8 +47,8 @@ def offset_lines(lines):
     return [translate_line(line, offset) for line in lines]
 
 
-def generate_translated_lines(line_strings: List[str], start: Tuple[int, int] = (0, 0)):
-    lines = [generate_line(l) for l in line_strings]
+def generate_translated_lines(line_strings: List[str], start: Tuple[int, int] = (0, 0), use_hex=False):
+    lines = [generate_line(l, use_hex) for l in line_strings]
 
     translated_lines = []
     for l in lines:
@@ -142,15 +145,6 @@ def dig_lagoon(lagoon):
     return lagoon
 
 
-def plot(lines):
-    for line in lines:
-        x_values = [point[0] for point in line]
-        y_values = [point[1] for point in line]
-        plt.plot(x_values, y_values)
-
-    plt.show()
-
-
 def count_cubic_meters(lagoon):
     return sum(l.count('#') for l in lagoon)
 
@@ -163,9 +157,8 @@ def part1(input='day18/input.txt', animate=False):
 
     lines = offset_lines(lines)
 
-    plot(lines)
-
     size = get_lagoon_size_from_lines(lines)
+
     lagoon = trench_lagoon_edges(lines, size)
 
     flood_fill(lagoon, 100, 100, animate)
@@ -173,5 +166,26 @@ def part1(input='day18/input.txt', animate=False):
     return count_cubic_meters(lagoon)
 
 
+def part2(input='day18/input.txt'):
+    with open(input, 'r') as file:
+        lines = [line.strip() for line in file.readlines()]
+
+    lines = generate_translated_lines(lines, use_hex=True)
+
+    vertices = [point for line in lines for point in line]
+    if vertices[0] != vertices[-1]:
+        vertices.append(vertices[0])
+
+    pgon = Polygon(vertices)
+    area = pgon.area
+    boundary_points = pgon.length
+
+    # pick's theorem
+    interior_points = area - boundary_points / 2 + 1
+
+    return int(interior_points + boundary_points)
+
+
 if __name__ == '__main__':
-    print(part1(animate=True))
+    print(part1(animate=False))
+    print(part2())
